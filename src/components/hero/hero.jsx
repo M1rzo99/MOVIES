@@ -1,7 +1,26 @@
 import React from 'react'
 import './hero.scss'
+import MovieService from '../../services/movie-service'
 
- const Hero = () => {
+
+ class Hero  extends React.Component {
+  constructor(props){
+    super(props)
+    this.state={
+      name:null,
+      description:null,
+      thumbnail:null,
+      id:null
+    }
+    this.movieService  = new MovieService
+    this.getMovie()
+  }
+
+  getMovie = () =>{
+    this.movieService.getRandomMovies().then(res=> this.setState(res))
+  }
+render(){
+  const {name,description,thumbnail} = this.state
   return (
     <div className='hero'>
         <div className='hero__info'>
@@ -17,15 +36,10 @@ import './hero.scss'
                    <button className='btn btn-primary'>Details</button>
         </div>
         <div className='hero__movie'>
-        <img src="/image1.svg" alt="img" />
+        <img src={thumbnail} />
         <div className='hero__movie-descr'>
-            <h2>Madellin</h2>
-            <p>Lorem ipsum dolor sit amet consectetur 
-                adipisicing elit. Repudiandae libero dignissimos rem 
-                ad aliquid nulla velit ducimus eaque maxime delectus quod sit voluptas optio
-                 qui minus at numquam illo commodi soluta inventore fugiat saepe, quibusdam mollitia? 
-                 Dolor odit porro totam asperiores,
-                 inventore quidem quisquam, ut eveniet reiciendis suscipit rerum provident! </p>
+            <h2>{name}</h2>
+            <p>{description && description.length>= 250 ? `${description.slice(0,250)}...` : description} </p>
                  <div>
                  <button className='btn btn-secondary'>Random Movies</button>
                  <button className='btn btn-primary'>Deteils</button>
@@ -34,5 +48,6 @@ import './hero.scss'
         </div>
     </div>
   )
+}
 }
 export default Hero
