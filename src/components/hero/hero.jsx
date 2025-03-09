@@ -1,26 +1,36 @@
 import React from 'react'
 import './hero.scss'
 import MovieService from '../../services/movie-service'
+import Spinner from '../spinner/spinner'
+import Error from '../error/error'
 
 
  class Hero  extends React.Component {
   constructor(props){
     super(props)
     this.state={
-      name:null,
-      description:null,
-      thumbnail:null,
-      id:null
+    movie:{},
+    loading:true,
+    error:false
     }
     this.movieService  = new MovieService
     this.getMovie()
   }
-
-  getMovie = () =>{
-    this.movieService.getRandomMovies().then(res=> this.setState(res))
-  }
+33
+getMovie = () => {
+  this.movieService.getRandomMovies()
+    .then(res => this.setState({ movie: res, loading: false, error: true })) // muvaffaqiyatli olib, loadingni false va errorni false qilib yangilaymiz
+    .catch(() => this.setState({ error: true, loading: false })) // xato bo'lsa, errorni true va loadingni false qilib yangilaymiz
+    .finally(()=>this.setState({loading:false}))
+}
 render(){
-  const {name,description,thumbnail} = this.state
+  const {movie,loading,error} = this.state
+  
+  const errorContent = error ? <Error/> : null
+
+  const loadingContent = loading ? <Spinner/> : null
+  
+  const content = !(error || loading) ? <Content movie={movie}/>: null
   return (
     <div className='hero'>
         <div className='hero__info'>
@@ -36,18 +46,31 @@ render(){
                    <button className='btn btn-primary'>Details</button>
         </div>
         <div className='hero__movie'>
-        <img src={thumbnail} />
-        <div className='hero__movie-descr'>
-            <h2>{name}</h2>
-            <p>{description && description.length>= 250 ? `${description.slice(0,250)}...` : description} </p>
-                 <div>
-                 <button className='btn btn-secondary'>Random Movies</button>
-                 <button className='btn btn-primary'>Deteils</button>
-                 </div>
-        </div>
+          {errorContent}
+          {loadingContent}
+          {content}
         </div>
     </div>
   )
 }
 }
 export default Hero
+
+const Content=({movie})=>{
+  return(
+    <>
+    <img src={movie.thumbnail} />
+        <div className='hero__movie-descr'>     
+            <h2>{movie.name}</h2>
+            <p>{movie.description && movie.description.length >= 250 
+            ? `${movie.description.slice(0,250)}...` 
+            : movie.description} 
+            </p>
+                 <div>
+                 <button className='btn btn-secondary'>Random Movies</button>
+                 <button className='btn btn-primary'>Deteils</button>
+                 </div>
+        </div>
+    </>
+  )
+}
