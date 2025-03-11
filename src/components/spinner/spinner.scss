@@ -1,28 +1,33 @@
 .loader {
-    width: 10px;
-    height: 10px;
+    width: 48px;
+    height: 48px;
+    border: 3px solid #FFF;
     border-radius: 50%;
-    background: #FF3D00;
+    display: inline-block;
     position: relative;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
 }
 
-.loader:before,
-.loader:after {
-    content: "";
+.loader::after {
+    content: '';
+    box-sizing: border-box;
     position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    inset: 0;
-    background: #fff;
-    transform: rotate(0deg) translate(20px);
-    animation: rotate 1s ease infinite;
+    border: 3px solid transparent;
+    border-bottom-color: #FF3D00;
 }
 
-.loader:after {
-    animation-delay: 0.5s
-}
-
-@keyframes rotate {
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
     100% {
-        transform: rotate(360deg) translate(20px)
+        transform: rotate(360deg);
     }
 }

@@ -1,6 +1,4 @@
  class MovieService {
-
-
      _apiBase = 'https://api.themoviedb.org/3/movie'
      _apiLng = 'language=en-US'
      _apiKey = 'api_key=a04db84b8b065da965a1502aa8230d54'
@@ -20,13 +18,15 @@
          return this.getResource(`${this._apiBase}/popular?${this._apiLng}&page=1&${this._apiKey}`)
      }
 
-     //  getAllTranding = async() => {
-     //      return this.getResource(`${this._apiBase}/top_rated?${this._apiLng}&page=1&${this._apiKey}`)
-
-     //  }
+     getAllTranding = async() => {
+         const response = await this.getResource(`${this._apiBase}/top_rated?${this._apiLng}&page=1&${this._apiKey}`)
+         const movies = response.results
+         return movies && movies.map(movie => this._transfromMovies(movie))
+     }
 
      getAllDetelies = async(id) => {
-         return this.getResource(`${this._apiBase}/${id}?${this._apiLng}&${this._apiKey}`)
+         const movie = await this.getResource(`${this._apiBase}/${id}?${this._apiLng}&${this._apiKey}`)
+         return this._transfromMovies(movie)
      }
 
      getRandomMovies = async() => {
@@ -39,8 +39,11 @@
          return {
              name: movie.original_title,
              description: movie.overview,
-             thumbnail: `${this._apiImg}${movie.poster_path}`,
-             id: movie.id
+             poster_path: `${this._apiImg}${movie.poster_path}`,
+             backdrop_path: `${this._apiImg}${movie.backdrop_path}`,
+             id: movie.id,
+             release_date: movie.release_date,
+             vote_average: movie.vote_average
          }
      }
 

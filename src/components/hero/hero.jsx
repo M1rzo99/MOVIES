@@ -13,16 +13,22 @@ import Error from '../error/error'
     loading:true,
     error:false
     }
-    this.movieService  = new MovieService
-    this.getMovie()
+     this.movieService  = new MovieService
   }
-33
-getMovie = () => {
+
+  componentDidMount(){
+    this.UpdatetMovie()
+  }
+
+
+  UpdatetMovie = () => {
+    this.setState({loading:true})
   this.movieService.getRandomMovies()
-    .then(res => this.setState({ movie: res, loading: false, error: true })) // muvaffaqiyatli olib, loadingni false va errorni false qilib yangilaymiz
+    .then(res => this.setState({ movie: res, loading: false, error: false })) // muvaffaqiyatli olib, loadingni false va errorni false qilib yangilaymiz
     .catch(() => this.setState({ error: true, loading: false })) // xato bo'lsa, errorni true va loadingni false qilib yangilaymiz
     .finally(()=>this.setState({loading:false}))
 }
+
 render(){
   const {movie,loading,error} = this.state
   
@@ -31,6 +37,7 @@ render(){
   const loadingContent = loading ? <Spinner/> : null
   
   const content = !(error || loading) ? <Content movie={movie}/>: null
+
   return (
     <div className='hero'>
         <div className='hero__info'>
@@ -43,7 +50,10 @@ render(){
                    assumenda nobis necessita
                    electus fugit eum incidunt ea?
                    </p>
-                   <button className='btn btn-primary'>Details</button>
+                  <div>
+                  <button className='btn btn-primary'>Details</button>
+                  <button className='btn btn-secondary' onClick={this.UpdatetMovie}>Random Movie</button>
+                  </div>
         </div>
         <div className='hero__movie'>
           {errorContent}
@@ -59,17 +69,14 @@ export default Hero
 const Content=({movie})=>{
   return(
     <>
-    <img src={movie.thumbnail} />
+    <img src={movie.poster_path} />
         <div className='hero__movie-descr'>     
             <h2>{movie.name}</h2>
             <p>{movie.description && movie.description.length >= 250 
             ? `${movie.description.slice(0,250)}...` 
             : movie.description} 
             </p>
-                 <div>
-                 <button className='btn btn-secondary'>Random Movies</button>
                  <button className='btn btn-primary'>Deteils</button>
-                 </div>
         </div>
     </>
   )

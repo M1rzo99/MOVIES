@@ -15,4 +15,4 @@ return <div  className="app">
     <RowMovies/> 
 </div>
 }
-export default App
+export default App;
