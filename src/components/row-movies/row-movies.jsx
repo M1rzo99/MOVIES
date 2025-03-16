@@ -26,8 +26,6 @@ class RowMovies extends React.Component {
   
 //NOTE - ComponentDidCatch() - qandaydir xatolik bo'lsa, user ga ekranda xatolikni ko'rsatadi
 
-
-
 // default parametr
   componentDidMount(){
     this.getTrendingMovies()

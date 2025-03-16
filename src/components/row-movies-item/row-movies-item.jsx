@@ -1,7 +1,6 @@
 import React from 'react'
 import './row-movies-item.scss'
 import propTypes from 'prop-types'
-
 const  RowMoviesItem=({movie,onOpen})=> {
   return (
     <div className='movieItem' onClick={()=>onOpen(movie.id)}>
@@ -17,10 +16,8 @@ const  RowMoviesItem=({movie,onOpen})=> {
     </div>
   )
 }
-
 RowMoviesItem.propTypes={
   movie: propTypes.object,
   onOpen:propTypes.func
 }
-
 export default RowMoviesItem
