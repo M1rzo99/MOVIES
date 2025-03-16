@@ -3,6 +3,7 @@ import './hero.scss'
 import MovieService from '../../services/movie-service'
 import Spinner from '../spinner/spinner'
 import Error from '../error/error'
+import PropTypes from 'prop-types'
 
 
  class Hero  extends React.Component {
@@ -80,4 +81,13 @@ const Content=({movie})=>{
         </div>
     </>
   )
+}
+
+Content.propTypes={
+  movie:{
+    backdrop_path: PropTypes.string,
+    name: PropTypes.string,
+    description: PropTypes.string,
+    id: PropTypes.number
+  }
 }

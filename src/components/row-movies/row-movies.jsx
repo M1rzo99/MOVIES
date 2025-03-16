@@ -8,6 +8,7 @@ import MoviesDB from '../../constants/index.js';  // yoki agar named export bo'l
 import MovieService from '../../services/movie-service.js';
 import Error from '../error/error.jsx';
 import Spinner from '../spinner/spinner.jsx';
+import propTypes from 'prop-types';
 
 class RowMovies extends React.Component {
     state = {
@@ -99,4 +100,8 @@ const Content=({movies,onOpen})=>{
         </div>
     </>
   )
+}
+Content.propTypes={
+  movies: propTypes.array,
+  onOpen: propTypes.func
 }

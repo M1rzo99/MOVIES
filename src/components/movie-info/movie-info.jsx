@@ -3,6 +3,7 @@ import './movie-info.scss'
 import MovieService from '../../services/movie-service'
 import Error from '../error/error';
 import Spinner from '../spinner/spinner';
+import PropTypes from 'prop-types';
 
 class MovieInfo extends React.Component { 
   state={
@@ -51,7 +52,10 @@ if(this.props.movieId !== prevProps.movieId){
   )
  }
 }
-
+//NOTE - malumotlarni type larini aniqlab beradi(propTypes)
+MovieInfo.propTypes={
+  movieId: PropTypes.number
+}
 export default MovieInfo
 
 const Content=({movie})=>{
@@ -66,4 +70,7 @@ const Content=({movie})=>{
         </div>
     </>
   )
+}
+Content.propTypes={
+  movie: PropTypes.object
 }

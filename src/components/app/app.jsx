@@ -12,10 +12,15 @@ const App =()=>{
 
 return <div  className="app">
     <Navbar/>
-    <Hero/>
+
+   <ErrorBoundary>
+     <Hero/>
+   </ErrorBoundary>
+
     <ErrorBoundary>
     <RowMovies/> 
     </ErrorBoundary>
+    
 </div>
 }
 export default App;
