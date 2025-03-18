@@ -1,76 +1,64 @@
-import React from 'react'
-import './movie-info.scss'
-import MovieService from '../../services/movie-service'
-import Error from '../error/error';
-import Spinner from '../spinner/spinner';
-import PropTypes from 'prop-types';
+import React, { useEffect, useState } from "react";
+import "./movie-info.scss";
+import MovieService from "../../services/movie-service";
+import Error from "../error/error";
+import Spinner from "../spinner/spinner";
+import PropTypes from "prop-types";
 
-class MovieInfo extends React.Component { 
-  state={
-    movie:null,
-    loading:true,
-    error:false
-  }
-  movieService = new MovieService();
+const MovieInfo = ({ movieId }) => {
+  const [movie, setMovie] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  componentDidMount(){
-    this.updateMovie()
-  }
-componentDidUpdate(prevProps){
-if(this.props.movieId !== prevProps.movieId){
-  this.updateMovie()
-}
-  
-}
-  updateMovie = () =>{
-    const {movieId} = this.props
-    if(!movieId){
-      this.setState({error:true})
+  const movieService = new MovieService();
+
+  useEffect(() => {
+    updateMovie();
+    // eslint-disable-next-line
+  }, [movieId]);
+
+  const updateMovie = () => {
+    if (!movieId) {
+      return;
     }
-    this.movieService
-    .getAllDetelies(movieId)
-    .then(res=> this.setState({movie:res}))
-    .catch(()=>this.setState({error:true}))
-    .finally(()=> this.setState({loading:false}))
-  }
+    setLoading(true);
 
+    movieService
+      .getAllDetelies(movieId)
+      .then((res) => setMovie(res))
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
+  };
 
- render(){
-  const {movie,loading,error} = this.state
-  
-  const errorContent = error ? <Error/> : null
-
-  const loadingContent = loading ? <Spinner/> : null
-  
-  const content = !(error || loading) ? <Content movie={movie}/>: null
+  const errorContent = error ? <Error /> : null;
+  const loadingContent = loading ? <Spinner /> : null;
+  const content = !(error || loading) ? <Content movie={movie} /> : null;
   return (
-    <div className='movieInfo'>
-      {errorContent} 
+    <div className="movieInfo">
+      {errorContent}
       {loadingContent}
       {content}
     </div>
-  )
- }
-}
-//NOTE - malumotlarni type larini aniqlab beradi(propTypes)
-MovieInfo.propTypes={
-  movieId: PropTypes.number
-}
-export default MovieInfo
+  );
+};
 
-const Content=({movie})=>{
-  return(
+//NOTE - malumotlarni type larini aniqlab beradi(propTypes)
+MovieInfo.propTypes = {
+  movieId: PropTypes.number,
+};
+export default MovieInfo;
+
+const Content = ({ movie }) => {
+  return (
     <>
-    <img  src={movie.poster_path} />
-        <div className='hero__movie-descr'>     
-            <h2>{movie.name}</h2>
-            <p>{movie.description} 
-            </p>
-            
-        </div>
+      <img src={movie.poster_path} />
+      <div className="hero__movie-descr">
+        <h2>{movie.name}</h2>
+        <p>{movie.description}</p>
+      </div>
     </>
-  )
-}
-Content.propTypes={
-  movie: PropTypes.object
-}
+  );
+};
+Content.propTypes = {
+  movie: PropTypes.object,
+};

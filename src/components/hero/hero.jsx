@@ -14,6 +14,7 @@ const Hero = () => {
 
   useEffect(() => {
     UpdatetMovie();
+    // eslint-disable-next-line
   }, []);
 
   const UpdatetMovie = () => {
@@ -58,7 +59,6 @@ const Hero = () => {
     </div>
   );
 };
-
 export default Hero;
 
 const Content = ({ movie }) => {
@@ -80,7 +80,7 @@ const Content = ({ movie }) => {
 
 Content.propTypes = {
   movie: {
-    poster_path: PropTypes.string,
+    backdrop_path: PropTypes.string,
     name: PropTypes.string,
     description: PropTypes.string,
     id: PropTypes.number,
