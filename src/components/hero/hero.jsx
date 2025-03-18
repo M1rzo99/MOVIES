@@ -4,13 +4,11 @@ import MovieService from "../../services/movie-service";
 import Spinner from "../spinner/spinner";
 import Error from "../error/error";
 import PropTypes from "prop-types";
+import useMovieService from "../../services/movie-service";
 
 const Hero = () => {
   const [movie, setMovie] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  const movieService = new MovieService();
+  const { getRandomMovies, error, loading, clearError } = useMovieService();
 
   useEffect(() => {
     UpdatetMovie();
@@ -18,19 +16,17 @@ const Hero = () => {
   }, []);
 
   const UpdatetMovie = () => {
-    setLoading(true);
-    movieService
-      .getRandomMovies()
-      .then((res) => setMovie(res)) // muvaffaqiyatli olib, loadingni false va errorni false qilib yangilaymiz
-      .catch(() => setError(true)) // xato bo'lsa, errorni true va loadingni false qilib yangilaymiz
-      .finally(() => setLoading(false));
+    clearError();
+    getRandomMovies().then((res) => setMovie(res));
   };
 
   const errorContent = error ? <Error /> : null;
 
   const loadingContent = loading ? <Spinner /> : null;
 
-  const content = !(error || loading) ? <Content movie={movie} /> : null;
+  const content = !(error || loading || !movie) ? (
+    <Content movie={movie} />
+  ) : null;
 
   return (
     <div className="hero">
