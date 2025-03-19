@@ -9,20 +9,19 @@ import MovieService from "../../services/movie-service.js";
 import Error from "../error/error.jsx";
 import Spinner from "../spinner/spinner.jsx";
 import propTypes from "prop-types";
+import useMovieService from "../../services/movie-service.js";
 
 const RowMovies = () => {
   const [movies, setMovies] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
   const [open, setOpen] = useState(false);
   const [movieId, setMovieId] = useState(null);
   const [page, setPage] = useState(2);
   const [newItemLoading, setNewItemLoading] = useState(false);
 
-  const movieService = new MovieService();
+  const { getAllTranding, loading, error } = useMovieService();
 
   useEffect(() => {
-    getTrendingMovies();
+    getMovies();
     // eslint-disable-next-line
   }, []);
 
@@ -33,30 +32,31 @@ const RowMovies = () => {
     setOpen(true);
   };
 
-  const getTrendingMovies = (page) => {
-    movieService
-      .getAllTranding(page)
-      .then((res) => setMovies((movies) => [...movies, ...res]))
-      .catch(() => setError(true))
-      .finally(() => {
-        setLoading(false);
-        setNewItemLoading(false);
+  const getMovies = (pageNum) => {
+    setNewItemLoading(true);
+    getAllTranding(pageNum).then((res) => {
+      setMovies((prevMovies) => {
+        // Takroriy filmlar oldini olish uchun Set dan foydalanamiz
+        const uniqueMovies = [...prevMovies, ...res].reduce((acc, movie) => {
+          acc.set(movie.id, movie);
+          return acc;
+        }, new Map());
+
+        return Array.from(uniqueMovies.values()); // Faqat unikal filmlar qoladi
       });
+      setNewItemLoading(false);
+    });
   };
 
   const getMoreMovies = () => {
     setNewItemLoading(true);
     setPage((page) => page + 1);
-    getTrendingMovies(page);
+    getMovies(page);
   };
 
   const errorContent = error ? <Error /> : null;
 
   const loadingContent = loading ? <Spinner /> : null;
-
-  const content = !(error || loading) ? (
-    <Content movies={movies} onOpen={onOpen} />
-  ) : null;
 
   return (
     <div className="rowmovies">
@@ -71,7 +71,7 @@ const RowMovies = () => {
 
       {errorContent}
       {loadingContent}
-      {content}
+      <Content movies={movies} onOpen={onOpen} />
 
       <div className="rowmovies__loadmore">
         <button
@@ -94,13 +94,15 @@ export default RowMovies;
 
 const Content = ({ movies, onOpen }) => {
   return (
-    <>
-      <div className="rowmovies__lists">
-        {movies.map((movie) => (
-          <RowMoviesItem key={movie.id} movie={movie} onOpen={onOpen} />
-        ))}
-      </div>
-    </>
+    <div className="rowmovies__lists">
+      {movies.map((movie, index) => (
+        <RowMoviesItem
+          key={movie.id ? `movie-${movie.id}` : `index-${index}`}
+          movie={movie}
+          onOpen={onOpen}
+        />
+      ))}
+    </div>
   );
 };
 Content.propTypes = {

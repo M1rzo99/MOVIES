@@ -13,16 +13,8 @@ const useMovieService = () => {
         return await request(`${_apiBase}/popular?${_apiLng}&${_apiPage}&${_apiKey}`)
     }
 
-    const getResource = async(url) => {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`Cuold not fetch${url}, status:${response.status}`)
-        }
-        return await response.json()
-    }
-
     const getAllTranding = async(page = _apiPage) => {
-        const response = await request(`${_apiBase}/movie/top_rated?${_apiLng}&page=${page}&${_apiKey}`)
+        const response = await request(`${_apiBase}/top_rated?${_apiLng}&page=${page}&${_apiKey}`)
         const movies = response.results
         return movies && movies.map(movie => _transfromMovies(movie))
     }
@@ -54,7 +46,6 @@ const useMovieService = () => {
         getAllTranding,
         getRandomMovies,
         getAllDetelies,
-        getResource,
         clearError,
         loading,
         error
