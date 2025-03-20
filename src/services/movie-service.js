@@ -5,12 +5,14 @@ const useMovieService = () => {
     const _apiBase = 'https://api.themoviedb.org/3/movie'
     const _apiLng = 'language=en-US'
     const _apiKey = 'api_key=a04db84b8b065da965a1502aa8230d54'
-    const _apiImg = 'https://image.tmdb.org/t/p/original';
+    const _apiImg = 'https://image.tmdb.org/t/p/original'
     const _apiPage = 1
 
 
-    const getAllPopular = async() => {
-        return await request(`${_apiBase}/popular?${_apiLng}&${_apiPage}&${_apiKey}`)
+    const getAllPopular = async(page = _apiPage) => {
+        const response = await request(`${_apiBase}/popular?${_apiLng}&page=${page}&${_apiKey}`)
+        const movies = response.results
+        return movies && movies.map(movie => _transfromMovies(movie))
     }
 
     const getAllTranding = async(page = _apiPage) => {
@@ -26,8 +28,9 @@ const useMovieService = () => {
 
     const getRandomMovies = async() => {
         const res = await getAllPopular()
-        const movie = (res.results[Math.floor(Math.random() * res.results.length)]) // random elementlarni olib beradi
-        return _transfromMovies(movie)
+        const movie = res[Math.floor(Math.random() * res.length)];
+        // random elementlarni olib beradi
+        return (movie)
     }
 
     const _transfromMovies = (movie) => {
@@ -46,6 +49,7 @@ const useMovieService = () => {
         getAllTranding,
         getRandomMovies,
         getAllDetelies,
+        getAllPopular,
         clearError,
         loading,
         error

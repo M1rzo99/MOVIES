@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import "./movie-info.scss";
-import MovieService from "../../services/movie-service";
+import { useParams } from "react-router-dom";
+import "./detelied-movie.scss";
+import useMovieService from "../../services/movie-service";
+import PropTypes from "prop-types";
 import Error from "../error/error";
 import Spinner from "../spinner/spinner";
-import PropTypes from "prop-types";
-import useMovieService from "../../services/movie-service";
-import { useNavigate } from "react-router-dom";
 
-const MovieInfo = ({ movieId }) => {
+const DeteliedMovie = () => {
   const [movie, setMovie] = useState(null);
 
+  const { movieId } = useParams();
   const { getAllDetelies, loading, error } = useMovieService();
 
   useEffect(() => {
@@ -30,40 +30,37 @@ const MovieInfo = ({ movieId }) => {
     <Content movie={movie} />
   ) : null;
   const inititialContent = movie || loading || error ? null : <Spinner />;
+
   return (
-    <div className="movieInfo">
+    <>
       {inititialContent}
       {errorContent}
       {loadingContent}
       {content}
-    </div>
+    </>
   );
 };
 
-//NOTE - malumotlarni type larini aniqlab beradi(propTypes)
-MovieInfo.propTypes = {
-  movieId: PropTypes.number,
-};
-export default MovieInfo;
+export default DeteliedMovie;
 
 const Content = ({ movie }) => {
-  console.log(movie);
-
-  let navigate = useNavigate();
   return (
-    <>
-      <img src={movie.poster_path} />
-      <div className="hero__movie-descr">
-        <h2>{movie.name}</h2>
-        <p>{movie.description}</p>
-        <button
-          className="btn btn-light"
-          onClick={() => navigate(`/movie/${movie.id}`)}
-        >
-          Details
-        </button>
+    <div className="deteliedmovie">
+      <div className="deteliedmovie__image">
+        <img src={movie.poster_path} alt={movie.name} />
       </div>
-    </>
+      <div className="deteliedmovie__descr">
+        <h1>{movie.name}</h1>
+        <p>{movie.description}</p>
+        <div className="deteliedmovie__descr-info">
+          <img src="/date.png" alt="" />
+          <p>{movie.release_date}</p>
+          <div className="dot" />
+          <p>{movie.vote_average}</p>
+          <img src="/star.svg" alt="" />
+        </div>
+      </div>
+    </div>
   );
 };
 Content.propTypes = {

@@ -1,28 +1,30 @@
-import React, { useEffect, useState } from "react";
-import RowMoviesItem from "../row-movies-item/row-movies-item";
-import MovieInfo from "../movie-info/movie-info";
-import "./row-movies.scss";
-import "react-responsive-modal/styles.css";
+import PropTypes from "prop-types";
+import { useEffect, useState } from "react";
 import { Modal } from "react-responsive-modal";
-import MoviesDB from "../../constants/index.js"; // yoki agar named export bo'lsa: { movies }
-import MovieService from "../../services/movie-service.js";
-import Error from "../error/error.jsx";
-import Spinner from "../spinner/spinner.jsx";
-import propTypes from "prop-types";
-import useMovieService from "../../services/movie-service.js";
+import "react-responsive-modal/styles.css";
+import { useLocation } from "react-router-dom";
+import useMovieService from "../../services/movie-service";
+import Error from "../error/error";
+import MovieInfo from "../movie-info/movie-info";
+import RowMoviesItem from "../row-movies-item/row-movies-item";
+import Spinner from "../spinner/spinner";
+import "./row-movies.scss";
 
 const RowMovies = () => {
-  const [movies, setMovies] = useState([]);
   const [open, setOpen] = useState(false);
+  const [movies, setMovies] = useState([]);
   const [movieId, setMovieId] = useState(null);
   const [page, setPage] = useState(2);
   const [newItemLoading, setNewItemLoading] = useState(false);
 
-  const { getAllTranding, loading, error } = useMovieService();
+  const { pathname } = useLocation();
+
+  console.log(pathname);
+
+  const { getAllTranding, getAllPopular, loading, error } = useMovieService();
 
   useEffect(() => {
     getMovies();
-    // eslint-disable-next-line
   }, []);
 
   const onClose = () => setOpen(false);
@@ -32,20 +34,16 @@ const RowMovies = () => {
     setOpen(true);
   };
 
-  const getMovies = (pageNum) => {
-    setNewItemLoading(true);
-    getAllTranding(pageNum).then((res) => {
-      setMovies((prevMovies) => {
-        // Takroriy filmlar oldini olish uchun Set dan foydalanamiz
-        const uniqueMovies = [...prevMovies, ...res].reduce((acc, movie) => {
-          acc.set(movie.id, movie);
-          return acc;
-        }, new Map());
-
-        return Array.from(uniqueMovies.values()); // Faqat unikal filmlar qoladi
-      });
-      setNewItemLoading(false);
-    });
+  const getMovies = (page) => {
+    if (pathname === "/popular") {
+      getAllPopular(page)
+        .then((res) => setMovies((movies) => [...movies, ...res]))
+        .finally(() => setNewItemLoading(false));
+    } else {
+      getAllTranding(page)
+        .then((res) => setMovies((movies) => [...movies, ...res]))
+        .finally(() => setNewItemLoading(false));
+    }
   };
 
   const getMoreMovies = () => {
@@ -55,22 +53,21 @@ const RowMovies = () => {
   };
 
   const errorContent = error ? <Error /> : null;
-
   const loadingContent = loading ? <Spinner /> : null;
 
   return (
     <div className="rowmovies">
       <div className="rowmovies__top">
-        <div className="rowmovies__top__title">
-          <img src="/tranding.svg" alt="svg" />
-          <h1>Trending</h1>
+        <div className="rowmovies__top-title">
+          <img src="/tranding.svg" alt="" />
+          <h1>{pathname === "/popular" ? "Popular" : "Tranding"}</h1>
         </div>
         <div className="hr" />
-        <a href="#">See More</a>
+        <a href="#">See more</a>
       </div>
-
       {errorContent}
       {loadingContent}
+
       <Content movies={movies} onOpen={onOpen} />
 
       <div className="rowmovies__loadmore">
@@ -95,17 +92,13 @@ export default RowMovies;
 const Content = ({ movies, onOpen }) => {
   return (
     <div className="rowmovies__lists">
-      {movies.map((movie, index) => (
-        <RowMoviesItem
-          key={movie.id ? `movie-${movie.id}` : `index-${index}`}
-          movie={movie}
-          onOpen={onOpen}
-        />
+      {movies.map((movie) => (
+        <RowMoviesItem key={movie.id} movie={movie} onOpen={onOpen} />
       ))}
     </div>
   );
 };
 Content.propTypes = {
-  movies: propTypes.array,
-  onOpen: propTypes.func,
+  movies: PropTypes.array,
+  onOpen: PropTypes.func,
 };

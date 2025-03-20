@@ -26,4 +26,14 @@
             border-color: rgba(255, 255, 255, 0.1)
         }
     }
+    &-light {
+        background-color: #000000dc;
+        border: 1px solid #fff;
+        color: #fff;
+        &:hover {
+            color: #fff;
+            background-color: #000000d5;
+            border-color: rgba(255, 255, 255, 0.1)
+        }
+    }
 }

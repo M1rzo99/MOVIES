@@ -19,6 +19,9 @@
                 a:hover {
                     color: $primary;
                 }
+                a.active {
+                    color: $primary
+                }
             }
         }
     }

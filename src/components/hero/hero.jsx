@@ -5,6 +5,7 @@ import Spinner from "../spinner/spinner";
 import Error from "../error/error";
 import PropTypes from "prop-types";
 import useMovieService from "../../services/movie-service";
+import { useNavigate } from "react-router";
 
 const Hero = () => {
   const [movie, setMovie] = useState(null);
@@ -41,7 +42,6 @@ const Hero = () => {
           assumenda nobis necessita electus fugit eum incidunt ea?
         </p>
         <div>
-          <button className="btn btn-primary">Details</button>
           <button className="btn btn-secondary" onClick={UpdatetMovie}>
             Random Movie
           </button>
@@ -58,6 +58,7 @@ const Hero = () => {
 export default Hero;
 
 const Content = ({ movie }) => {
+  let navigate = useNavigate();
   return (
     <>
       <img src={movie.poster_path} />
@@ -68,7 +69,12 @@ const Content = ({ movie }) => {
             ? `${movie.description.slice(0, 250)}...`
             : movie.description}
         </p>
-        <button className="btn btn-primary">Deteils</button>
+        <button
+          className="btn btn-primary"
+          onClick={() => navigate(`/movie/${movie.id}`)}
+        >
+          Deteils
+        </button>
       </div>
     </>
   );
